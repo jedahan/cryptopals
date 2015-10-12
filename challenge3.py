@@ -42,7 +42,7 @@ def find_best_string(string):
     crypt = base64.b16decode(cryp, True)
     return str(bytes([ crypt[i] ^ key for i in range(len(crypt)) ]))
 
-  words = [ xor(string, n) for n in range(ord('A'),ord('Z')) ]
+  words = [ xor(string, n) for n in range(ord('A'),ord('z')) ]
 
   scores = [ score(word) for word in words ]
 
