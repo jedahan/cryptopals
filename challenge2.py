@@ -1,11 +1,15 @@
 import base64
+from challenge1 import hex264
 
 def xor(cryp, key):
-  crypt = base64.b16decode(cryp, True)
-  key = base64.b16decode(key, True)
-  print(key)
-  return bytes([ crypt[i] ^ key[i] for i in range(len(crypt)) ])
+  crypt = hex264(cryp)
+  key = hex264(key)
+  if(len(key)==1):
+    return bytes([ crypt[i] ^ key for i in range(len(crypt)) ])
+  else:
+    return bytes([ crypt[i] ^ key[i] for i in range(len(crypt)) ])
 
-xord = xor(b'1c0111001f010100061a024b53535009181c', b'686974207468652062756c6c277320657965')
-
-print(xord)
+if __name__ == "__main__":
+  decoded = xor('1c0111001f010100061a024b53535009181c', '686974207468652062756c6c277320657965')
+  assert(decoded == b"the kid don't play")
+  print(decoded)

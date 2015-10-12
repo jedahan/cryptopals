@@ -1,4 +1,5 @@
 import base64
+from challenge2 import xor
 
 def score(word):
   word = word.lower()
@@ -38,11 +39,7 @@ def score(word):
   return score
 
 def find_best_string(string):
-  def xor(cryp, key):
-    crypt = base64.b16decode(cryp, True)
-    return str(bytes([ crypt[i] ^ key for i in range(len(crypt)) ]))
-
-  words = [ xor(string, n) for n in range(ord('A'),ord('z')) ]
+  words = [ xor(string, chr(n)) for n in range(ord('A'),ord('z')) ]
 
   scores = [ score(word) for word in words ]
 
