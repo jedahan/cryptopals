@@ -50,6 +50,6 @@ def find_best_string(string):
 
 if __name__ == "__main__":
   print(find_best_string("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"))
-  lines = [line.strip() for line in open('3.txt').readlines()]
+  lines = [line.strip() for line in open('input/3.txt').readlines()]
   strings = [find_best_string(line) for line in lines]
   print(strings)
