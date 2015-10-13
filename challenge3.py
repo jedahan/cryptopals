@@ -46,5 +46,7 @@ def find_best_string(string):
   return words[scores.index(max(scores))]
 
 if __name__ == "__main__":
-  print(find_best_string("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"))
-  print(find_best_string(open('input/3.txt').read().strip()))
+  encrypted = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
+  decrypted = find_best_string(encrypted).decode()
+  assert(decrypted == "Cooking MC's like a pound of bacon")
+  print(decrypted)
