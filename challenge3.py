@@ -34,19 +34,17 @@ def score(word):
     'z': .0007,
    }
   score = 0
-  for letter in frequencies:
-    score = score + (frequencies[letter] * word.count(letter))
+  for letter, percent in frequencies.items():
+    score = score + percent * word.count(letter)
   return score
 
 def find_best_string(string):
-  words = [ xor(string, chr(n)) for n in range(ord('A'),ord('z')) ]
+  words = [ xor(string, hex(n)[2:]) for n in range(128) ]
 
-  scores = [ score(word) for word in words ]
+  scores = [ score(word.decode('ascii')) for word in words ]
 
   return words[scores.index(max(scores))]
 
 if __name__ == "__main__":
   print(find_best_string("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"))
-  lines = [line.strip() for line in open('input/3.txt').readlines()]
-  strings = [find_best_string(line) for line in lines]
-  print(strings)
+  print(find_best_string(open('input/3.txt').read().strip()))
