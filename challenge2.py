@@ -10,6 +10,6 @@ def xor(cryp, key):
     return bytes([ crypt[i] ^ key[i] for i in range(len(crypt)) ])
 
 if __name__ == "__main__":
-  decoded = xor('1c0111001f010100061a024b53535009181c', '686974207468652062756c6c277320657965')
-  assert(decoded == b"the kid don't play")
+  decoded = xor('1c0111001f010100061a024b53535009181c', '686974207468652062756c6c277320657965').decode('utf-8')
+  assert(decoded == "the kid don't play")
   print(decoded)
