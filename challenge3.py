@@ -41,18 +41,15 @@ def score(word):
 def find_best_string(string):
   words = []
   for n in range(255):
-    word = xor(string, hex(n)[2:])
     try:
-      words.append(word.decode())
+      words.append(xor(string, hex(n)[2:]).decode())
     except:
       next
+  if len(words) == 0: return
 
   scores = [ score(word) for word in words ]
 
-  if len(scores) > 0:
-    return words[scores.index(max(scores))]
-  else:
-    return ""
+  return words[scores.index(max(scores))]
 
 if __name__ == "__main__":
   encrypted = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
