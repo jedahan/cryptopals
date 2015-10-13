@@ -35,18 +35,27 @@ def score(word):
    }
   score = 0
   for letter, percent in frequencies.items():
-    score = score + percent * word.count(letter.encode('utf8'))
+    score = score + percent * word.count(letter)
   return score
 
 def find_best_string(string):
-  words = [ xor(string, hex(n)[2:]) for n in range(255) ]
+  words = []
+  for n in range(255):
+    word = xor(string, hex(n)[2:])
+    try:
+      words.append(word.decode())
+    except:
+      next
 
   scores = [ score(word) for word in words ]
 
-  return words[scores.index(max(scores))]
+  if len(scores) > 0:
+    return words[scores.index(max(scores))]
+  else:
+    return ""
 
 if __name__ == "__main__":
   encrypted = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
-  decrypted = find_best_string(encrypted).decode()
+  decrypted = find_best_string(encrypted)
   assert(decrypted == "Cooking MC's like a pound of bacon")
   print(decrypted)
