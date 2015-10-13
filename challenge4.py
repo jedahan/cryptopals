@@ -4,4 +4,7 @@ from challenge3 import find_best_string, score
 if __name__ == "__main__":
   lines = [line.strip() for line in open('input/4.txt').readlines()]
   strings = [find_best_string(line) for line in lines]
-  print(strings)
+  scores = [score(string) for string in strings]
+  best = strings[scores.index(max(scores))]
+  assert(best == "Now that the party is jumping")
+  print(best)
