@@ -35,13 +35,13 @@ def score(word):
    }
   score = 0
   for letter, percent in frequencies.items():
-    score = score + percent * word.count(letter)
+    score = score + percent * word.count(letter.encode('utf8'))
   return score
 
 def find_best_string(string):
-  words = [ xor(string, hex(n)[2:]) for n in range(128) ]
+  words = [ xor(string, hex(n)[2:]) for n in range(255) ]
 
-  scores = [ score(word.decode('ascii')) for word in words ]
+  scores = [ score(word) for word in words ]
 
   return words[scores.index(max(scores))]
 
