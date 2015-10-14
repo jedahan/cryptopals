@@ -1,8 +1,8 @@
 import base64
 from challenge2 import xor
 
+# word is actually a byte array
 def score(word):
-  word = word.lower()
   # from http://www.data-compression.com/english.html
   frequencies = {
     ' ': .1918,
@@ -35,24 +35,33 @@ def score(word):
    }
   score = 0
   for letter, percent in frequencies.items():
-    score = score + percent * word.count(letter)
+    score = score + percent * word.count(ord(letter))
   return score
 
-def find_best_string(string):
-  words = []
+def decrypt(encrypted_bytes, key):
+  decrypted = ""
+  for byte in encrypted_bytes:
+    decrypted = decrypted + chr(byte ^ ord(key))
+  return decrypted
+
+def guess_single_key(encrypted_bytes):
+  best_score = 0
+  best_key = None
   for n in range(255):
-    try:
-      words.append(xor(string, hex(n)[2:]).decode())
-    except:
-      next
-  if len(words) == 0: return
+    this_score = score(xor(encrypted_bytes, [n]))
+    if this_score > best_score:
+      best_score = this_score
+      best_key = chr(n)
 
-  scores = [ score(word) for word in words ]
+  return best_key
 
-  return words[scores.index(max(scores))]
+def find_best_string(encrypted):
+  encrypted = [x for x in base64.b16decode(encrypted, True)]
+  key = guess_single_key(encrypted)
+  decrypted = decrypt(encrypted, key)
+  return decrypted
 
 if __name__ == "__main__":
-  encrypted = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
-  decrypted = find_best_string(encrypted)
+  decrypted = find_best_string("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
   assert(decrypted == "Cooking MC's like a pound of bacon")
   print(decrypted)
