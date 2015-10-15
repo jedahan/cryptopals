@@ -35,7 +35,8 @@ def score(word):
    }
   score = 0
   for letter, percent in frequencies.items():
-    score = score + percent * word.count(ord(letter))
+    score = score + percent * (word.count(ord(letter)) + word.count(ord(letter.upper())))
+  score = score - word.count(ord(' ')) * frequencies[' ']
   return score
 
 def decrypt(encrypted_bytes, key):
