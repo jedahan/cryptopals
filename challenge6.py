@@ -1,63 +1,45 @@
 from challenge5 import xor
+from challenge3 import guess_single_key
 import base64
 
+# expects two lists of bytes
 def hamming(this, that):
-  return sum([ bin(ord(l) ^ ord(that[i])).count('1') for i, l in enumerate(this) ])
+  return sum([ bin(l ^ that[i]).count('1') for i, l in enumerate(this) ])
 
 def guess_keysize(encrypted):
-  distances = [ hamming(encrypted[:i], encrypted[i:2*i])/i for i in range(1,40) ]
-  return distances.index(min(distances))+1
+  distances = []
+  for i in range(2,41):
+    chunks = int((len(encrypted)-i)/i)
+    some_distance = [ hamming(encrypted[l*i:(l+1)*i], encrypted[(l+1)*i:(l+2)*i])/chunks for l in range(chunks) ]
+    distances.append(sum(some_distance)/i)
 
-def guess_string(encrypted, keysize):
-  encrypted = [x for x in base64.b64decode(encrypted)]
-  blocks = [[],[],[]]
+  # this is not returning the right thing, it should return something like 37...
+  return distances.index(min(distances))+2
+
+# expects encrypted to be bytes
+def guess_key(encrypted, keysize):
+  blocks = [[] for _ in range(keysize)]
   for i,byte in enumerate(encrypted):
     blocks[i % keysize].append(byte)
 
-  key = "".join([ guess_key(block) for block in blocks ])
-  print(key)
-  decrypt_string(encrypted, key)
+  return "".join([ guess_single_key(block) for block in blocks ])
 
-def decrypt_string(encrypted, key):
+def decrypt(encrypted, key):
   decrypted = ""
   for i, num in enumerate(encrypted):
     decrypted = decrypted + chr(num ^ ord(key[i % len(key)]))
-  print(decrypted)
+  return decrypted
 
-def histogram_distance(this, that):
-    distances = [ (percent - that[i]) ** 2 for i, percent in enumerate(this) ]
-    return sum(distances)
-
-def guess_key(block):
-  best_key = None
-  min_distance = float("Inf")
-  # space, a, b, ..., y, z
-  histogram = [ .1918, .0812, .0149, .0271, .0432, .1202, .0230, .0203, .0592, .0731, .0010, .0069, .0398, .0261, .0695, .0768, .0182, .0011, .0602, .0628, .0910, .0288, .0111, .0209, .0017, .0211, .0007 ]
-
-  for possible_key in range(255):
-    hist = [ 0 for _ in range(27) ]
-    for number in block:
-      try:
-        char = chr(possible_key ^ number).lower()
-        index = ord(char) - ord('a') + 1
-        if char == ' ': index = 0
-        hist[index] = hist[index] + 1
-      except:
-        next
-    # normalize histogram
-    hist = [ n/len(block) for n in hist ]
-    distance = histogram_distance(histogram, hist)
-    if distance < min_distance:
-      best_key = possible_key
-      min_distance = distance
-  print(best_key, min_distance)
-  return chr(best_key)
+def str2bytes(string):
+    return [ord(x) for x in string]
 
 if __name__ == "__main__":
-  distance = hamming("this is a test", "wokka wokka!!!")
-  encrypted = open('input/6.txt').read().strip()
-  assert( distance == 37 )
+  assert(hamming(str2bytes("this is a test"),str2bytes("wokka wokka!!!"))==37)
+  encrypted = [x for x in base64.b64decode(open('input/6.txt').read().strip())]
 
   keysize = guess_keysize(encrypted)
-  decrypted = guess_string(encrypted, keysize)
+  print("keysize is maybe %s" % keysize)
+  key = guess_key(encrypted, keysize)
+  print("key is maybe %r" % key)
+  decrypted = decrypt(encrypted, key)
   print(decrypted)
