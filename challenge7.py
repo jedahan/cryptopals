@@ -1,5 +1,3 @@
-from challenge5 import xor
-from challenge3 import guess_single_key
 import base64
 from Crypto.Cipher import AES
 
